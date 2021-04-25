@@ -44,6 +44,7 @@ export interface TestWord {
     wrongs: number;
     testWrongs: number;
     testRating: number;
+    spendedTime: number;
     rating: number;
 }
 

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState, useRef, useEffect, memo, useCallback } from 'react';
+import React, { ChangeEvent, useState, useRef, useEffect, memo, useCallback, useMemo } from 'react';
 import { Button, Paper, LinearProgress, Typography, Input, CircularProgress } from '@material-ui/core';
 import { AxiosResponse } from 'axios';
 import { WordData } from '@common/word';
@@ -6,6 +6,12 @@ import { TestProps, TestWord } from './test.types';
 import { useStyles } from './test.styles';
 import { createHistories, loadWordPack } from './test.resources';
 import { getTestWord } from './test.service';
+import {
+    CHANGE_WORD_TIMEOUT,
+    INPUT_CLASSSES,
+    TEST_TIME_RATING_COEFFICIENT,
+    TEST_TIME_THRESHOLD,
+} from './test.constants';
 
 export const Test = memo(({ testType, maxAmount, finishTest }: TestProps) => {
     const [notification, setNotification] = useState(false);
@@ -17,6 +23,7 @@ export const Test = memo(({ testType, maxAmount, finishTest }: TestProps) => {
     const [testWords, setTestWords] = useState<TestWord[]>([]);
     const [testWord, setTestWord] = useState<TestWord>();
     const [startTime, setStartTime] = useState(0);
+    const [startWordTime, setStartWordTime] = useState(0);
     const [totalRating, setTotalRating] = useState(0);
     const [totalWrongs, setTotalWrongs] = useState(0);
     const [amount, setAmount] = useState(0);
@@ -35,6 +42,7 @@ export const Test = memo(({ testType, maxAmount, finishTest }: TestProps) => {
             setStartTime(new Date().getTime());
             setTestWord(words[0]);
             setAmount(words.length);
+            setStartWordTime(new Date().getTime());
         });
     }, [maxAmount, testType]);
 
@@ -79,7 +87,8 @@ export const Test = memo(({ testType, maxAmount, finishTest }: TestProps) => {
                 setTestWord(testWords[0]);
                 setTestWords(testWords);
                 setValue('');
-            }, 2000);
+                setStartWordTime(new Date().getTime());
+            }, CHANGE_WORD_TIMEOUT);
         } else {
             const histories = answeredWords.map(({ id, wrongs, rating }) => ({ wordId: id, wrongs, rating }));
             createHistories({ histories });
@@ -93,10 +102,15 @@ export const Test = memo(({ testType, maxAmount, finishTest }: TestProps) => {
         if (testWord && word) {
             const isRight = testWord.word.translate === value;
 
+            word.spendedTime +=
+                Math.max(new Date().getTime() - startWordTime, TEST_TIME_THRESHOLD) - TEST_TIME_THRESHOLD;
+
             if (isRight) {
-                const rating = Math.floor(110 / Math.log(word.testWrongs + 3));
-                word.wrongs += word.testWrongs;
-                word.rating += rating;
+                const rating = Math.floor(
+                    110 / Math.log(word.spendedTime / TEST_TIME_RATING_COEFFICIENT + word.testWrongs + 3)
+                );
+                word.wrongs = word.testWrongs;
+                word.rating = rating;
                 word.testRating = rating;
                 answeredWords.push(word);
             } else {
@@ -111,7 +125,7 @@ export const Test = memo(({ testType, maxAmount, finishTest }: TestProps) => {
         }
 
         changeWord();
-    }, [answeredWords, changeWord, testWord, testWords, value]);
+    }, [answeredWords, changeWord, testWord, testWords, value, startWordTime]);
 
     const handleInputKeyDown = useCallback(
         (event: React.KeyboardEvent<HTMLInputElement>): void => {
@@ -129,6 +143,8 @@ export const Test = memo(({ testType, maxAmount, finishTest }: TestProps) => {
     const handleDoneButtonClick = useCallback((): void => {
         finishTest();
     }, [finishTest]);
+
+    const inputProps = useMemo(() => ({ ref: inputRef }), [inputRef]);
 
     return (
         <>
@@ -162,8 +178,9 @@ export const Test = memo(({ testType, maxAmount, finishTest }: TestProps) => {
                         </div>
                         <div className={classes.ui}>
                             <Input
+                                classes={INPUT_CLASSSES}
                                 disabled={notification}
-                                inputProps={{ className: 'test', ref: inputRef }}
+                                inputProps={inputProps}
                                 onKeyDown={handleInputKeyDown}
                                 value={value}
                                 onChange={handleInputChange}

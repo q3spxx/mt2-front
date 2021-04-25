@@ -21,6 +21,7 @@ export const getTestWord = (testType: TestType, word: WordData): TestWord => {
             },
             wrongs,
             rating,
+            spendedTime: 0,
             testWrongs: 0,
             testRating: 0,
         };
@@ -36,6 +37,7 @@ export const getTestWord = (testType: TestType, word: WordData): TestWord => {
         },
         wrongs,
         rating,
+        spendedTime: 0,
         testWrongs: 0,
         testRating: 0,
     };

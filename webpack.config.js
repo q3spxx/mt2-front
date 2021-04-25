@@ -33,6 +33,7 @@ module.exports = {
         open: true,
         proxy: {
             '/v1': 'http://mt2:8080',
+            // '/v1': 'http://localhost:6000',
         },
     },
     plugins: [
