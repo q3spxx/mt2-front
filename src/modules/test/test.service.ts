@@ -1,5 +1,3 @@
-import { Word } from '@common/word';
-import { TestType } from '@common/test';
 import { TestWord } from './test.types';
 import { TEST_VARIANTS } from './test.constants';
 

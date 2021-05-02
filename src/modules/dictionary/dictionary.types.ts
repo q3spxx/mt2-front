@@ -1,5 +1,3 @@
-import { WordData } from '@common/word';
-
 export interface DictionaryProps {
     words: WordData[];
 }

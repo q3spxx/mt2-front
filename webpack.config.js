@@ -12,7 +12,6 @@ module.exports = {
     resolve: {
         extensions: ['.ts', '.tsx', '.js'],
         alias: {
-            '@common': path.resolve(__dirname, 'src/common/'),
             '@state': path.resolve(__dirname, 'src/state/'),
         },
     },
@@ -32,8 +31,8 @@ module.exports = {
         hot: true,
         open: true,
         proxy: {
-            '/v1': 'http://mt2:8080',
-            // '/v1': 'http://localhost:6000',
+            // '/v1': 'http://mt2:8080',
+            '/v1': 'http://localhost:6000',
         },
     },
     plugins: [

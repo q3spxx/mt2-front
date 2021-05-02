@@ -1,17 +1,12 @@
 import React, { ChangeEvent, useState, useRef, useEffect, memo, useCallback, useMemo } from 'react';
 import { Button, Paper, LinearProgress, Typography, Input, CircularProgress } from '@material-ui/core';
 import { AxiosResponse } from 'axios';
-import { WordData } from '@common/word';
+import { useHistoryActions } from '@state/history';
 import { TestProps, TestWord } from './test.types';
 import { useStyles } from './test.styles';
-import { createHistories, loadWordPack } from './test.resources';
+import { loadTestWords } from './test.resources';
 import { getTestWord } from './test.service';
-import {
-    CHANGE_WORD_TIMEOUT,
-    INPUT_CLASSSES,
-    TEST_TIME_RATING_COEFFICIENT,
-    TEST_TIME_THRESHOLD,
-} from './test.constants';
+import { CHANGE_WORD_TIMEOUT, INPUT_CLASSSES, TEST_TIME_RATING_COEFFICIENT } from './test.constants';
 
 export const Test = memo(({ testType, maxAmount, finishTest }: TestProps) => {
     const [notification, setNotification] = useState(false);
@@ -29,12 +24,14 @@ export const Test = memo(({ testType, maxAmount, finishTest }: TestProps) => {
     const [amount, setAmount] = useState(0);
     const [spendedTime, setSpendedTime] = useState(new Date());
 
+    const { createHistory } = useHistoryActions();
+
     const inputRef = useRef<HTMLInputElement>(null);
 
     const classes = useStyles({});
 
     useEffect(() => {
-        loadWordPack({ limit: maxAmount }).then(({ data }: AxiosResponse<WordData[]>) => {
+        loadTestWords({ limit: maxAmount }).then(({ data }: AxiosResponse<WordData[]>) => {
             const words = data.map((word) => getTestWord(testType, word));
 
             setTestWords(words);
@@ -67,13 +64,8 @@ export const Test = memo(({ testType, maxAmount, finishTest }: TestProps) => {
         setStatistics(true);
         setSpendedTime(time);
         setTotalWrongs(wrongs);
-        setTotalRating(
-            rating -
-                Math.floor(
-                    rating * (Math.log(Math.E + Math.E * Math.min(Math.max(spendedTime.getTime()) / 600000, 1)) - 1)
-                )
-        );
-    }, [answeredWords, startTime, spendedTime]);
+        setTotalRating(rating / answeredWords.length);
+    }, [answeredWords, startTime]);
 
     const changeWord = useCallback((): void => {
         if (testWords.length !== 0) {
@@ -90,11 +82,17 @@ export const Test = memo(({ testType, maxAmount, finishTest }: TestProps) => {
                 setStartWordTime(new Date().getTime());
             }, CHANGE_WORD_TIMEOUT);
         } else {
-            const histories = answeredWords.map(({ id, wrongs, rating }) => ({ wordId: id, wrongs, rating }));
-            createHistories({ histories });
+            const words = answeredWords.map(({ id, wrongs, rating, spendedTime, variant }) => ({
+                id,
+                wrongs,
+                rating,
+                spendedTime,
+                variant,
+            }));
+            createHistory({ testType, wordsAmount: maxAmount, words });
             showStatistics();
         }
-    }, [testWords, answeredWords, inputRef, showStatistics]);
+    }, [testWords, answeredWords, inputRef, showStatistics, testType, maxAmount, createHistory]);
 
     const checkAnswer = useCallback((): void => {
         const word = testWords.shift();
@@ -102,8 +100,7 @@ export const Test = memo(({ testType, maxAmount, finishTest }: TestProps) => {
         if (testWord && word) {
             const isRight = testWord.word.translate === value;
 
-            word.spendedTime +=
-                Math.max(new Date().getTime() - startWordTime, TEST_TIME_THRESHOLD) - TEST_TIME_THRESHOLD;
+            word.spendedTime += new Date().getTime() - startWordTime;
 
             if (isRight) {
                 const rating = Math.floor(
@@ -192,8 +189,10 @@ export const Test = memo(({ testType, maxAmount, finishTest }: TestProps) => {
                 {statistics && (
                     <>
                         <Typography variant="h6">{`Word count: ${answeredWords.length}`}</Typography>
-                        <Typography variant="h6">{`Spended time: ${spendedTime.getMinutes()}m ${spendedTime.getSeconds()}s`}</Typography>
-                        <Typography variant="h6">{`Total rating: ${totalRating}`}</Typography>
+                        <Typography variant="h6">{`Spended time: ${new Date(spendedTime).toLocaleTimeString('ru-RU', {
+                            timeZone: 'UTC',
+                        })}`}</Typography>
+                        <Typography variant="h6">{`Average rating: ${totalRating}`}</Typography>
                         <Typography variant="h6">{`Total wrongs: ${totalWrongs}`}</Typography>
                         <Button onClick={handleDoneButtonClick}>done</Button>
                     </>

@@ -1,7 +1,6 @@
-import { WordData, Word, WordType } from '@common/word';
-
 export interface DictionaryStoreState {
     words: WordData[];
+    loading: boolean;
 }
 
 export interface WordParams {

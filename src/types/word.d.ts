@@ -1,5 +1,7 @@
 type WordType = 'verb' | 'adjective' | 'noun' | 'adverb' | 'preposition' | 'сonjunction';
 
+type WordVariant = 'main' | 'secondary' | 'third';
+
 interface Word {
     name: string;
     translate: string;
@@ -13,4 +15,6 @@ interface WordData {
     type: WordType;
     rating: number;
     wrongs: number;
+    spendedTime: number;
+    variant: WordVariant;
 }

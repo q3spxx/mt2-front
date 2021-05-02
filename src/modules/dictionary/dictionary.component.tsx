@@ -8,9 +8,8 @@ import Typography from '@material-ui/core/Typography';
 import TableBody from '@material-ui/core/TableBody';
 import TableSortLabel from '@material-ui/core/TableSortLabel';
 import Button from '@material-ui/core/Button';
-import { WordData } from '@common/word';
 import DeleteIcon from '@material-ui/icons/Delete';
-import { IconButton } from '@material-ui/core';
+import { IconButton, LinearProgress } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import { selectDictionary, useDictionaryActions } from '@state/dictionary';
 import { useSelector } from 'react-redux';
@@ -29,7 +28,7 @@ export const Dictionary = memo(
         const [orderBy, setOrderBy] = useState<OrderBy>('rating');
         const [order, setOrder] = useState<Order>('desc');
         const [currentWord, setCurrentWord] = useState<WordData>();
-        const { words } = useSelector(selectDictionary);
+        const { words, loading } = useSelector(selectDictionary);
 
         const { loadWords } = useDictionaryActions();
 
@@ -71,6 +70,10 @@ export const Dictionary = memo(
         const closeUpdateWordDialog = useCallback((): void => {
             setUpdateModalIsOpen(false);
         }, []);
+
+        if (loading) {
+            return <LinearProgress />;
+        }
 
         return (
             <>

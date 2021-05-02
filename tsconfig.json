@@ -17,7 +17,6 @@
         "experimentalDecorators": true,
         "baseUrl": "./src/",
         "paths": {
-            "@common/*": ["common/*"],
             "@state/*": ["state/*"]
         }
     },

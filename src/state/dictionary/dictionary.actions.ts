@@ -1,4 +1,3 @@
-import { WordData } from '@common/word';
 import { ActionsFactory } from '../actions.factory';
 import { WordParams } from './dictionary.types';
 

@@ -1,12 +1,6 @@
-export { DictionaryStoreState, WordParams } from './dictionary.types';
-export { dictionaryEpic } from './dictionary.epic';
-export { dictionary } from './dictionary.reducer';
-export {
-    fetchWordsAction,
-    updateWordAction,
-    updateWordsAction,
-    deleteWordAction,
-    createWordAction,
-} from './dictionary.actions';
-export { useDictionaryActions } from './dictionary.hooks';
-export { selectDictionary } from './dictionary.selectors';
+export * from './dictionary.types';
+export * from './dictionary.epic';
+export * from './dictionary.reducer';
+export * from './dictionary.actions';
+export * from './dictionary.hooks';
+export * from './dictionary.selectors';

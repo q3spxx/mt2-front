@@ -1,4 +1,3 @@
-import { WordData } from '@common/word';
 import { Order, OrderBy } from './dictionary.types';
 
 export const sortWithParams = (words: WordData[], orderBy: OrderBy, order: Order): WordData[] =>

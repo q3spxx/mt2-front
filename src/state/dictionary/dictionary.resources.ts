@@ -1,5 +1,4 @@
 import axios, { AxiosPromise } from 'axios';
-import { WordData } from '@common/word';
 import { WordParams, DeleteWordParams } from './dictionary.types';
 
 export const loadWords = (): AxiosPromise<WordData[]> => axios.get<WordData[]>('v1/words');

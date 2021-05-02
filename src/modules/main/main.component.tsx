@@ -2,6 +2,7 @@ import React, { ChangeEvent, useState, useCallback, memo } from 'react';
 import Tabs from '@material-ui/core/Tabs/Tabs';
 import Tab from '@material-ui/core/Tab/Tab';
 import { Dictionary } from '../dictionary';
+import { History } from '../history';
 import { TestSelection } from '../test-selection';
 import { Test } from '../test';
 import { MainTab } from './main.types';
@@ -32,9 +33,11 @@ export const Main = memo(() => {
             <Tabs variant="fullWidth" value={tab} onChange={handleTabsChange}>
                 <Tab label="tests" />
                 <Tab label="dictionary" />
+                <Tab label="history" />
             </Tabs>
             {tab === MainTab.TEST_SELECTION && <TestSelection runTest={handleRunTest} />}
             {tab === MainTab.DICTIONARY && <Dictionary />}
+            {tab === MainTab.HISTORY && <History />}
         </>
     );
 });

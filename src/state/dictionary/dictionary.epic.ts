@@ -9,7 +9,7 @@ import {
     updateWordsAction,
     updateWordAction,
 } from './dictionary.actions';
-import { loadWords, createWord, deleteWord, updateWord } from './dictionary.resource';
+import { loadWords, createWord, deleteWord, updateWord } from './dictionary.resources';
 
 const fetchWordsEpic = (action$: ActionsObservable<AnyAction>): Observable<AnyAction> => {
     return action$.ofType(fetchWordsAction.started.type).pipe(
