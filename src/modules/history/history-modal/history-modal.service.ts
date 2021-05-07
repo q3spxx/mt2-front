@@ -1,4 +1,4 @@
-import { OrderBy } from './dictionary.types';
+import { OrderBy } from './history-modal.types';
 
 export const sortWithParams = (words: WordData[], orderBy: OrderBy, order: Order): WordData[] =>
     [...words].sort((wordA, wordB) => {

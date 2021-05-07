@@ -1,16 +1,40 @@
-import { LinearProgress, Paper, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@material-ui/core';
+import {
+    LinearProgress,
+    Paper,
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableRow,
+    TableSortLabel,
+    Typography,
+} from '@material-ui/core';
 import { selectHistory, useHistoryActions } from '@state/history';
-import React, { memo, useEffect } from 'react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { HistoryModal } from './history-modal/history-modal.component';
+import { sortWithParams } from './history.service';
+import { OrderBy } from './history.types';
 
 export const History = memo(() => {
     const { loadHistory } = useHistoryActions();
     const { history, loading } = useSelector(selectHistory);
+    const [orderBy, setOrderBy] = useState<OrderBy>('createdAt');
+    const [order, setOrder] = useState<Order>('desc');
+
+    const items = useMemo(() => sortWithParams(history, orderBy, order), [history, orderBy, order]);
 
     useEffect(() => {
         loadHistory();
     }, [loadHistory]);
+
+    const handleSortClick = (name: OrderBy) => (): void => {
+        if (name === orderBy) {
+            setOrder(order === 'asc' ? 'desc' : 'asc');
+        } else {
+            setOrderBy(name);
+        }
+    };
 
     if (loading) {
         return <LinearProgress />;
@@ -22,27 +46,63 @@ export const History = memo(() => {
                 <TableHead>
                     <TableRow>
                         <TableCell sortDirection="asc">
-                            <Typography variant="subtitle2">Test type</Typography>
+                            <TableSortLabel
+                                active={orderBy === 'testType'}
+                                direction={order}
+                                onClick={handleSortClick('testType')}
+                            >
+                                <Typography variant="subtitle2">Test type</Typography>
+                            </TableSortLabel>
                         </TableCell>
                         <TableCell>
-                            <Typography variant="subtitle2">Words amount</Typography>
+                            <TableSortLabel
+                                active={orderBy === 'wordsAmount'}
+                                direction={order}
+                                onClick={handleSortClick('wordsAmount')}
+                            >
+                                <Typography variant="subtitle2">Words amount</Typography>
+                            </TableSortLabel>
                         </TableCell>
                         <TableCell>
-                            <Typography variant="subtitle2">Wrongs</Typography>
+                            <TableSortLabel
+                                active={orderBy === 'wrongs'}
+                                direction={order}
+                                onClick={handleSortClick('wrongs')}
+                            >
+                                <Typography variant="subtitle2">Wrongs</Typography>
+                            </TableSortLabel>
                         </TableCell>
                         <TableCell>
-                            <Typography variant="subtitle2">Average rating</Typography>
+                            <TableSortLabel
+                                active={orderBy === 'rating'}
+                                direction={order}
+                                onClick={handleSortClick('rating')}
+                            >
+                                <Typography variant="subtitle2">Average rating</Typography>
+                            </TableSortLabel>
                         </TableCell>
                         <TableCell>
-                            <Typography variant="subtitle2">Spended time</Typography>
+                            <TableSortLabel
+                                active={orderBy === 'spendedTime'}
+                                direction={order}
+                                onClick={handleSortClick('spendedTime')}
+                            >
+                                <Typography variant="subtitle2">Spended time</Typography>
+                            </TableSortLabel>
                         </TableCell>
                         <TableCell>
-                            <Typography variant="subtitle2">Date</Typography>
+                            <TableSortLabel
+                                active={orderBy === 'createdAt'}
+                                direction={order}
+                                onClick={handleSortClick('createdAt')}
+                            >
+                                <Typography variant="subtitle2">Date</Typography>
+                            </TableSortLabel>
                         </TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {history.map((test) => (
+                    {items.map((test) => (
                         <HistoryModal key={test.id} test={test} />
                     ))}
                 </TableBody>

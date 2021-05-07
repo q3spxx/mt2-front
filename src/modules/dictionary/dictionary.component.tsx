@@ -13,7 +13,7 @@ import { IconButton, LinearProgress } from '@material-ui/core';
 import EditIcon from '@material-ui/icons/Edit';
 import { selectDictionary, useDictionaryActions } from '@state/dictionary';
 import { useSelector } from 'react-redux';
-import { Order, OrderBy } from './dictionary.types';
+import { OrderBy } from './dictionary.types';
 import { AddWordDialog } from '../add-word-dialog';
 import { DeleteWordDialog } from '../delete-word-dialog';
 import { UpdateWordDialog } from '../update-word-dialog';
@@ -39,10 +39,11 @@ export const Dictionary = memo(
         const dictionary = useMemo(() => sortWithParams(words, orderBy, order), [words, order, orderBy]);
 
         const handleSortClick = (name: OrderBy) => (): void => {
-            const newOrder = order === 'asc' ? 'desc' : 'asc';
-
-            setOrderBy(name);
-            setOrder(name === orderBy ? newOrder : 'asc');
+            if (name === orderBy) {
+                setOrder(order === 'asc' ? 'desc' : 'asc');
+            } else {
+                setOrderBy(name);
+            }
         };
 
         const handleAddButtonClick = useCallback((): void => {
@@ -92,7 +93,7 @@ export const Dictionary = memo(
                                 <TableCell sortDirection="asc">
                                     <TableSortLabel
                                         active={orderBy === 'main'}
-                                        direction={orderBy === 'main' ? order : 'asc'}
+                                        direction={order}
                                         onClick={handleSortClick('main')}
                                     >
                                         <Typography variant="subtitle2">Main</Typography>
@@ -107,7 +108,7 @@ export const Dictionary = memo(
                                 <TableCell align="right">
                                     <TableSortLabel
                                         active={orderBy === 'type'}
-                                        direction={orderBy === 'type' ? order : 'asc'}
+                                        direction={order}
                                         onClick={handleSortClick('type')}
                                     >
                                         <Typography variant="subtitle2">Type</Typography>
@@ -116,7 +117,7 @@ export const Dictionary = memo(
                                 <TableCell align="right">
                                     <TableSortLabel
                                         active={orderBy === 'rating'}
-                                        direction={orderBy === 'rating' ? order : 'asc'}
+                                        direction={order}
                                         onClick={handleSortClick('rating')}
                                     >
                                         <Typography variant="subtitle2">Rating</Typography>
