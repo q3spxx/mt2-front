@@ -24,11 +24,11 @@ export const TestSelection = memo(({ runTest }: TestsProps) => {
     return (
         <Paper className={classes.container}>
             <Typography variant="subtitle2">Choose test type</Typography>
-            <Select fullWidth value={testType} onChange={handleTestTypeChange}>
+            <Select fullWidth value={testType} variant="outlined" onChange={handleTestTypeChange}>
                 <MenuItem value="en2ru">English to russian</MenuItem>
                 <MenuItem value="ru2en">Russian to english</MenuItem>
             </Select>
-            <Select fullWidth value={count} onChange={handleCountChange}>
+            <Select fullWidth value={count} variant="outlined" onChange={handleCountChange}>
                 {WORDS_COUNT.map((wordsCount) => (
                     <MenuItem key={wordsCount} value={wordsCount}>
                         {wordsCount}

@@ -4,7 +4,7 @@ export const useTestsStyles = makeStyles({
     container: {
         display: 'flex',
         flexDirection: 'column',
-        width: 512,
+        maxWidth: 512,
         padding: 18,
         boxSizing: 'border-box',
         margin: '0 auto',

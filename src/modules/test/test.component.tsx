@@ -104,7 +104,19 @@ export const Test = memo(({ testType, maxAmount, finishTest }: TestProps) => {
 
             if (isRight) {
                 const rating = Math.floor(
-                    110 / Math.log(word.spendedTime / TEST_TIME_RATING_COEFFICIENT + word.testWrongs + 3)
+                    100 -
+                        100 *
+                            Math.min(
+                                Math.log2(
+                                    word.testWrongs +
+                                        Math.max(
+                                            (word.spendedTime / TEST_TIME_RATING_COEFFICIENT) *
+                                                ((8 - word.testWrongs) / 8),
+                                            1
+                                        )
+                                ) / 3,
+                                1
+                            )
                 );
                 word.wrongs = word.testWrongs;
                 word.rating = rating;
