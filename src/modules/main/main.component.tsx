@@ -9,7 +9,7 @@ import { MainTab } from './main.types';
 import { Metrics } from '../metrics';
 
 export const Main = memo(() => {
-    const [tab, setTab] = useState(MainTab.METRICS);
+    const [tab, setTab] = useState(MainTab.TEST_SELECTION);
     const [testType, setTestType] = useState<TestType>();
     const [maxAmount, setMaxAmount] = useState<number>();
 
